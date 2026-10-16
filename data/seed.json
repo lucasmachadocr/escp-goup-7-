@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "updatedAt": "2026-10-16",
+  "projects": [
+    {
+      "id": "proptech",
+      "title": "PropTech",
+      "courseCode": "",
+      "description": "Trabalho em grupo; arquivos individuais e do projeto no Drive da ESCP.",
+      "status": "active",
+      "sourceUrl": ""
+    },
+    {
+      "id": "consulting",
+      "title": "Consulting",
+      "courseCode": "MRE06",
+      "description": "Casos e apresentações de consultoria imobiliária.",
+      "status": "active",
+      "sourceUrl": ""
+    },
+    {
+      "id": "subject-3",
+      "title": "Matéria 3",
+      "courseCode": "",
+      "description": "Nome e escopo a confirmar com o grupo.",
+      "status": "needs-verification",
+      "sourceUrl": ""
+    },
+    {
+      "id": "subject-4",
+      "title": "Matéria 4",
+      "courseCode": "",
+      "description": "Nome e escopo a confirmar com o grupo.",
+      "status": "needs-verification",
+      "sourceUrl": ""
+    }
+  ],
+  "members": [],
+  "tasks": [],
+  "events": [],
+  "documents": []
+}
