@@ -65,7 +65,7 @@ function render(){
  const titles={inicio:'Visão geral',projetos:'Matéria',agenda:'Agenda',documentos:'Documentos',equipe:'Equipe',notificacoes:'Notificações',agente:'Integrante AI'};
  $('#page-title').textContent=titles[view];
  document.querySelectorAll('.nav').forEach(n=>n.classList.toggle('active',n.dataset.view===view));
- $('#content').innerHTML=({inicio:overview,projetos:projects,agenda,documentos,equipe:team,notificacoes:notifications,agente:agent})[view]();
+ $('#content').innerHTML=({inicio:overview,projetos:projects,agenda,documentos:documents,equipe:team,notificacoes:notifications,agente:agent})[view]();
 }
 const options=()=>db.projects.map(p=>`<option value="${esc(p.id)}">${esc(p.title)}</option>`).join('');
 function formRow(name,label,type='text',required=true){return `<label class="form-row">${label}<input class="field" name="${name}" type="${type}" ${required?'required':''}></label>`}
