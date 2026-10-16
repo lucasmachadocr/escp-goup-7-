@@ -1,5 +1,15 @@
 const KEY = 'grupo7-dashboard-v2';
 const TZ = 'Europe/Madrid';
+const FALLBACK_SEED = {
+  version: 2,
+  projects: [
+    {id:'proptech',title:'PropTech',courseCode:'',description:'Trabalho em grupo',status:'active',sourceUrl:''},
+    {id:'consulting',title:'Consulting',courseCode:'MRE06',description:'Trabalho em grupo',status:'active',sourceUrl:''},
+    {id:'subject-3',title:'Matéria 3',courseCode:'',description:'Nome a confirmar',status:'needs-verification',sourceUrl:''},
+    {id:'subject-4',title:'Matéria 4',courseCode:'',description:'Nome a confirmar',status:'needs-verification',sourceUrl:''}
+  ],
+  members: [], tasks: [], events: [], documents: []
+};
 let db, view = 'inicio', filter = '', selectedProject = '';
 const $ = s => document.querySelector(s);
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -8,7 +18,12 @@ const project = id => db.projects.find(p => p.id === id);
 const fmt = date => date ? new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short',year:'numeric',timeZone:TZ}).format(new Date(date+'T12:00:00+02:00')) : 'Sem data';
 const todayISO = () => new Intl.DateTimeFormat('en-CA',{year:'numeric',month:'2-digit',day:'2-digit',timeZone:TZ}).format(new Date());
 const sortEvents = () => [...db.events].sort((a,b) => (a.date||'9999').localeCompare(b.date||'9999'));
-function save(){localStorage.setItem(KEY,JSON.stringify(db));render();window.Group7Drive?.persist(db)}
+function save(){
+  try { localStorage.setItem(KEY,JSON.stringify(db)); }
+  catch { notice('O navegador bloqueou o armazenamento local. Exporte os dados para não perdê-los.'); }
+  render();
+  window.Group7Drive?.persist(db);
+}
 function notice(message){const el=$('#notice');el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),6000)}
 function badge(status){return status==='confirmed'?'<span class="pill">Confirmado</span>':'<span class="pill warn">A confirmar</span>'}
 function statusText(s){return ({todo:'A fazer',doing:'Em andamento',done:'Concluída'})[s]||s}
@@ -157,5 +172,25 @@ $('#entry-form').addEventListener('submit',e=>{e.preventDefault();try{addEntry(e
 $('#close-dialog').onclick=$('#cancel-dialog').onclick=()=>$('#entry-dialog').close();
 $('#export').onclick=()=>{const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='grupo7-dados-'+todayISO()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)};
 $('#import').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{const d=JSON.parse(await file.text());if(!Array.isArray(d.projects)||!Array.isArray(d.members)||!Array.isArray(d.tasks)||!Array.isArray(d.events)||!Array.isArray(d.documents))throw Error('Estrutura JSON inválida.');db=d;save();notice('Dados importados neste navegador.')}catch(err){notice('Importação falhou: '+err.message)}e.target.value=''};
-async function init(){try{const seed=await (await fetch('data/seed.json')).json();db=JSON.parse(localStorage.getItem(KEY)||'null')||seed;$('#today').textContent=new Intl.DateTimeFormat('pt-BR',{day:'numeric',month:'long',year:'numeric',timeZone:TZ}).format(new Date());render();window.Group7Drive?.init({onLoad:data=>{db=data;localStorage.setItem(KEY,JSON.stringify(db));render()},onNotice:notice});checkAlerts();setInterval(checkAlerts,60*60*1000)}catch(err){notice('Não foi possível carregar os dados do painel.');console.error(err)}}
+async function init(){
+  let seed = FALLBACK_SEED;
+  try {
+    const response = await fetch('data/seed.json', {cache:'no-store'});
+    if (response.ok) {
+      const candidate = await response.json();
+      if (Array.isArray(candidate.projects) && Array.isArray(candidate.events)) seed = candidate;
+    }
+  } catch (error) { console.warn('Usando estrutura básica do painel:', error); }
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    db = saved && ['projects','members','tasks','events','documents'].every(k=>Array.isArray(saved[k])) ? saved : seed;
+  } catch { db = seed; }
+  $('#today').textContent = new Intl.DateTimeFormat('pt-BR',{day:'numeric',month:'long',year:'numeric',timeZone:TZ}).format(new Date());
+  render();
+  try {
+    window.Group7Drive?.init({onLoad:data=>{db=data;try{localStorage.setItem(KEY,JSON.stringify(db))}catch{}render()},onNotice:notice});
+  } catch (error) { console.error(error); notice('A conexão com o Drive não iniciou. O menu permanece disponível no modo local.'); }
+  checkAlerts();
+  setInterval(checkAlerts,60*60*1000);
+}
 init();

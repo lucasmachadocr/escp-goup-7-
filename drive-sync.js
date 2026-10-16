@@ -10,7 +10,7 @@ window.Group7Drive = (() => {
 
   function setStatus(message) {
     status().textContent = message;
-    button().textContent = connected ? 'Drive conectado' : 'Conectar Drive';
+    button().textContent = connected ? 'Drive conectado' : settings ? 'Conectar Drive' : 'Configurar Drive';
   }
   function idFromUrl(value, kind) {
     const v = (value || '').trim();
