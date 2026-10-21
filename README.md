@@ -2,6 +2,8 @@
 
 Painel minimalista para quatro frentes de trabalho, agenda, equipe, documentos e briefing do integrante AI.
 
+> **Estado atual (21 out 2026):** sem dados compartilhados — cada navegador guarda sua própria cópia. A conexão com o Drive descrita abaixo nunca foi validada de ponta a ponta. Veja `docs/HANDOFF.md` (diagnóstico) e `docs/ROADMAP.md` (arquitetura proposta). Instruções para agentes: `CLAUDE.md`.
+
 ## Dados compartilhados no Google Drive
 
 O repositório público contém apenas código e dados de demonstração. Os documentos originais pertencem à pasta **Grupo 7** no Google Drive. O arquivo privado **Dados do painel/dashboard.json** é a fonte compartilhada para projetos, equipe, tarefas, agenda e links de documentos. Não envie esse arquivo, links privados ou e-mails institucionais ao GitHub.

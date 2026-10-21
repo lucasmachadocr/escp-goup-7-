@@ -1,0 +1,5 @@
+# Mapa de fontes, exportações e qualquer dado do grupo: nunca versionar.
+private/
+grupo7-dados-*.json
+dashboard.json
+node_modules/
